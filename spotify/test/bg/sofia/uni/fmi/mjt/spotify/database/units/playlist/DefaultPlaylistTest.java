@@ -47,9 +47,9 @@ class DefaultPlaylistTest {
     void testConstructorEmptyPlaylist() throws InvalidPlaylistInfoException {
         DefaultPlaylist playlist = new DefaultPlaylist("MyPlaylist", user);
 
-        assertEquals("MyPlaylist", playlist.getTitle());
-        assertEquals(user, playlist.getOwner());
-        assertTrue(playlist.getSongs().isEmpty());
+        assertEquals("MyPlaylist", playlist.getTitle(), "Invalid playlist title");
+        assertEquals(user, playlist.getOwner(), "Invalid playlist owner");
+        assertTrue(playlist.getSongs().isEmpty(),  "Invalid playlist songs");
     }
 
     @Test
@@ -80,11 +80,11 @@ class DefaultPlaylistTest {
 
         DefaultPlaylist playlist = DefaultPlaylist.of(line, database);
 
-        assertEquals("GymBeats", playlist.getTitle());
-        assertEquals(user.getEmail(), playlist.getOwner().getEmail());
-        assertEquals(2, playlist.getSongs().size());
-        assertTrue(playlist.getSongs().contains(song1));
-        assertTrue(playlist.getSongs().contains(song2));
+        assertEquals("GymBeats", playlist.getTitle(),  "Invalid playlist title");
+        assertEquals(user.getEmail(), playlist.getOwner().getEmail(),  "Invalid playlist owner");
+        assertEquals(2, playlist.getSongs().size(), "Invalid playlist songs");
+        assertTrue(playlist.getSongs().contains(song1),  "Invalid playlist song");
+        assertTrue(playlist.getSongs().contains(song2),   "Invalid playlist song");
     }
 
     @Test
@@ -93,8 +93,8 @@ class DefaultPlaylistTest {
 
         DefaultPlaylist playlist = DefaultPlaylist.of(line, database);
 
-        assertEquals("EmptyList", playlist.getTitle());
-        assertTrue(playlist.getSongs().isEmpty());
+        assertEquals("EmptyList", playlist.getTitle(),  "Invalid playlist title");
+        assertTrue(playlist.getSongs().isEmpty(),   "Invalid playlist songs");
     }
 
     @Test
@@ -106,8 +106,8 @@ class DefaultPlaylistTest {
 
         DefaultPlaylist playlist = DefaultPlaylist.of(line, database);
 
-        assertEquals(1, playlist.getSongs().size());
-        assertTrue(playlist.getSongs().contains(song1));
+        assertEquals(1, playlist.getSongs().size(), "Invalid playlist songs");
+        assertTrue(playlist.getSongs().contains(song1),   "Invalid playlist song");
     }
 
     @Test
@@ -123,13 +123,13 @@ class DefaultPlaylistTest {
 
     @Test
     void testOfNullLine() {
-        assertThrows(NullPointerException.class, () -> DefaultPlaylist.of(null, database));
+        assertThrows(NullPointerException.class, () -> DefaultPlaylist.of(null, database), "Null playlist line must throw");
     }
 
     @Test
     void testOfInvalidFormat() {
         String line = "invalidline";
-        assertThrows(InvalidPlaylistInfoException.class, () -> DefaultPlaylist.of(line, database));
+        assertThrows(InvalidPlaylistInfoException.class, () -> DefaultPlaylist.of(line, database),  "Invalid playlist line");
     }
 
     @Test
@@ -154,14 +154,14 @@ class DefaultPlaylistTest {
 
         playlist.addSong(song1);
 
-        assertEquals(1, playlist.getSongs().size());
-        assertTrue(playlist.getSongs().contains(song1));
+        assertEquals(1, playlist.getSongs().size(), "Invalid playlist songs");
+        assertTrue(playlist.getSongs().contains(song1),    "Invalid playlist song");
     }
 
     @Test
     void testAddSongNull() throws InvalidPlaylistInfoException {
         DefaultPlaylist playlist = new DefaultPlaylist("Title", user);
-        assertThrows(NullPointerException.class, () -> playlist.addSong(null));
+        assertThrows(NullPointerException.class, () -> playlist.addSong(null), "Adding null songs must throw");
     }
 
     @Test
@@ -190,8 +190,8 @@ class DefaultPlaylistTest {
         DefaultPlaylist p1 = new DefaultPlaylist("Title", user);
         DefaultPlaylist p2 = new DefaultPlaylist("Title", user);
 
-        assertEquals(p1, p2);
-        assertEquals(p1.hashCode(), p2.hashCode());
+        assertEquals(p1, p2, "Playlists with same title and owner must be equal");
+        assertEquals(p1.hashCode(), p2.hashCode(), "Playlists with same title and owner must have the same hash code");
     }
 
     @Test
@@ -206,8 +206,8 @@ class DefaultPlaylistTest {
 
         String result = playlist.toString();
 
-        assertTrue(result.startsWith("test@mail.com,pass123 MyPlaylist:"));
-        assertTrue(result.contains("Song1-Artist1"));
-        assertTrue(result.contains("Song2-Artist2"));
+        assertTrue(result.startsWith("test@mail.com,pass123 MyPlaylist:"), "Invalid playlist string");
+        assertTrue(result.contains("Song1-Artist1"), "Invalid playlist string for a song");
+        assertTrue(result.contains("Song2-Artist2"), "Invalid playlist string for a song");
     }
 }

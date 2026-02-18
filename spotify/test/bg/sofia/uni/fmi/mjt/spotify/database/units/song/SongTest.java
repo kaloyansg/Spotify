@@ -100,7 +100,7 @@ class SongTest {
     void testOfInvalidFormat() {
         String folderPath = testDir.toString() + File.separator;
         assertThrows(InvalidSongException.class,
-                () -> Song.of(folderPath, "Artist-Title.mp3"), "Invlaid format");
+                () -> Song.of(folderPath, "Artist-Title.mp3"), "Invalid format");
     }
 
     @Test
@@ -108,13 +108,13 @@ class SongTest {
         String folderPath = testDir.toString() + File.separator;
         Song song = Song.of(folderPath, TEST_SONG);
 
-        assertEquals(0, song.getStreamsCnt());
+        assertEquals(0, song.getStreamsCnt(), "No streamed song must have 0 streams");
 
         song.stream();
-        assertEquals(1, song.getStreamsCnt());
+        assertEquals(1, song.getStreamsCnt(), "Invalid streams count");
 
         song.stream();
-        assertEquals(2, song.getStreamsCnt());
+        assertEquals(2, song.getStreamsCnt(), "Invalid streams count");
     }
 
     @Test
@@ -126,7 +126,7 @@ class SongTest {
         song.stream();
         song.endStream();
 
-        assertEquals(1, song.getStreamsCnt());
+        assertEquals(1, song.getStreamsCnt(),  "Invalid streams count");
     }
 
     @Test
@@ -135,7 +135,7 @@ class SongTest {
         Song song = Song.of(folderPath, TEST_SONG);
 
         song.endStream();
-        assertEquals(0, song.getStreamsCnt());
+        assertEquals(0, song.getStreamsCnt(),  "Invalid streams count");
     }
 
     @Test
@@ -145,7 +145,7 @@ class SongTest {
         Song song1 = Song.of(folderPath, TEST_SONG);
         Song song2 = Song.of(folderPath, TEST_SONG);
 
-        assertEquals(song1, song2);
-        assertEquals(song1.hashCode(), song2.hashCode());
+        assertEquals(song1, song2, "Songs from one file must be equal");
+        assertEquals(song1.hashCode(), song2.hashCode(), "Songs from one file must have the same hash code");
     }
 }

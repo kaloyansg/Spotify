@@ -21,8 +21,8 @@ class UserTest {
     void testConstructorValid() throws InvalidEmailException {
         User user = new User(TEST_EMAIL, TEST_PASS);
 
-        assertNotNull(user);
-        assertEquals(TEST_EMAIL, user.getEmail());
+        assertNotNull(user, "User must not be null");
+        assertEquals(TEST_EMAIL, user.getEmail(), "Email address mismatch");
     }
 
     @Test
@@ -65,8 +65,8 @@ class UserTest {
         String line = "john@doe.com,password123";
         User user = User.of(line);
 
-        assertEquals("john@doe.com", user.getEmail());
-        assertTrue(user.checkPassword("password123"));
+        assertEquals("john@doe.com", user.getEmail(), "Email address mismatch");
+        assertTrue(user.checkPassword("password123"), "Password mismatch");
     }
 
     @Test
@@ -88,13 +88,13 @@ class UserTest {
     @Test
     void testCheckPassword() throws InvalidEmailException {
         User user = new User(TEST_EMAIL, TEST_PASS);
-        assertTrue(user.checkPassword(TEST_PASS));
+        assertTrue(user.checkPassword(TEST_PASS),  "Password mismatch");
     }
 
     @Test
     void testCheckPasswordWrongPassword() throws InvalidEmailException {
         User user = new User(TEST_EMAIL, TEST_PASS);
-        assertFalse(user.checkPassword("wrongPass"));
+        assertFalse(user.checkPassword("wrongPass"),  "Password mismatch");
     }
 
     @Test
@@ -102,7 +102,7 @@ class UserTest {
         User user = new User(TEST_EMAIL, TEST_PASS);
         User loginAttempt = new User(TEST_EMAIL, TEST_PASS);
 
-        assertTrue(user.checkPassword(loginAttempt));
+        assertTrue(user.checkPassword(loginAttempt),   "Password mismatch");
     }
 
     @Test
@@ -110,7 +110,7 @@ class UserTest {
         User user = new User(TEST_EMAIL, TEST_PASS);
         User loginAttempt = new User(TEST_EMAIL, "wrongPass");
 
-        assertFalse(user.checkPassword(loginAttempt));
+        assertFalse(user.checkPassword(loginAttempt),    "Password mismatch");
     }
 
     @Test
@@ -127,20 +127,19 @@ class UserTest {
         User user1 = new User("a@test.com", TEST_PASS);
         User user2 = new User("b@test.com", TEST_PASS);
 
-        assertNotEquals(user1, user2);
+        assertNotEquals(user1, user2, "Users with different emails must not be equal");
     }
 
     @Test
     void testNotEqualsNullAndDifferentClass() throws InvalidEmailException {
         User user = new User(TEST_EMAIL, TEST_PASS);
 
-        assertNotEquals(user, null);
-        assertNotEquals(user, "Some String");
+        assertNotEquals(user, null, "Created user must not be null");
     }
 
     @Test
     void testToString() throws InvalidEmailException {
         User user = new User("me@here.bg", "myPass");
-        assertEquals("me@here.bg,myPass", user.toString());
+        assertEquals("me@here.bg,myPass", user.toString(), "Invalid User string");
     }
 }

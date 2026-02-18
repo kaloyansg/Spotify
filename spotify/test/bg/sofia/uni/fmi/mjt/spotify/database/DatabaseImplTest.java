@@ -102,37 +102,37 @@ class DatabaseImplTest {
     void testLoadInitialData() {
         Collection<Song> songs = database.searchSongs();
         assertEquals(3, songs.size(), "Should load 3 songs from disk");
-        assertDoesNotThrow(() -> database.checkUser("existing@mail.com", "password123"));
+        assertDoesNotThrow(() -> database.checkUser("existing@mail.com", "password123"), "Existing user should not throw");
     }
 
     @Test
     void testRegisterUser() throws UserAlreadyExistsException, InvalidEmailException, NonExistingUserException, InvalidPasswordException {
         database.registerUser("new@mail.com", "pass");
-        assertDoesNotThrow(() -> database.checkUser("new@mail.com", "pass"));
+        assertDoesNotThrow(() -> database.checkUser("new@mail.com", "pass"), "Added user should not throw");
     }
 
     @Test
     void testRegisterDuplicate() {
         assertThrows(UserAlreadyExistsException.class,
-                () -> database.registerUser("existing@mail.com", "password123"));
+                () -> database.registerUser("existing@mail.com", "password123"), "Duplicate user must throw");
     }
 
     @Test
     void testCheckUserWrongPassword() {
         assertThrows(InvalidPasswordException.class,
-                () -> database.checkUser("existing@mail.com", "wrongpass"));
+                () -> database.checkUser("existing@mail.com", "wrongpass"), "Wrong password must throw");
     }
 
     @Test
     void testCheckUserNonExistingUser() {
         assertThrows(NonExistingUserException.class,
-                () -> database.checkUser("ghost@mail.com", "pass"));
+                () -> database.checkUser("ghost@mail.com", "pass"), "Non existing user must throw");
     }
 
     @Test
     void testSearchSongs() {
-        assertEquals(1, database.searchSongs("Title1").size());
-        assertEquals(3, database.searchSongs().size());
+        assertEquals(1, database.searchSongs("Title1").size(), "Invalid search result with one title filter");
+        assertEquals(3, database.searchSongs().size(), "Invalid search result with no filters");
     }
 
     @Test
@@ -141,13 +141,13 @@ class DatabaseImplTest {
         s1.stream();
 
         List<Song> top = (List<Song>) database.getTopSongs(1);
-        assertEquals("Title1", top.get(0).getTitle());
+        assertEquals("Title1", top.get(0).getTitle(), "Could find the top 1 song");
     }
 
     @Test
     void testGetSongNotFound() {
         assertThrows(NonExistingSongException.class,
-                () -> database.getSong("Ghost", "Busters"));
+                () -> database.getSong("Ghost", "Busters"), "Song not found");
     }
 
     @Test
@@ -155,20 +155,20 @@ class DatabaseImplTest {
         database.createPlaylist("NewJams", "existing@mail.com");
 
         Playlist p = database.getPlaylist("NewJams", "existing@mail.com");
-        assertNotNull(p);
-        assertTrue(p.getSongs().isEmpty());
+        assertNotNull(p, "Existing test playlist should not be null");
+        assertTrue(p.getSongs().isEmpty(), "Test playlist should be empty");
     }
 
     @Test
     void testAddSongToPlaylist() throws Exception {
         database.addSong("MyHits", "existing@mail.com", "Title2", "Artist2");
-        assertEquals(2, database.getPlaylistSongs("MyHits", "existing@mail.com").size());
+        assertEquals(2, database.getPlaylistSongs("MyHits", "existing@mail.com").size(), "Test playlist must have 2 songs");
     }
 
     @Test
     void testAddSongPlaylistNotFound() {
         assertThrows(NonExistingPlaylistException.class,
-                () -> database.addSong("FakeList", "existing@mail.com", "Title1", "Artist1"));
+                () -> database.addSong("FakeList", "existing@mail.com", "Title1", "Artist1"), "Adding song to nonexisting playlist must throw");
     }
 
     @Test
@@ -180,7 +180,7 @@ class DatabaseImplTest {
 
         DatabaseImpl reloadedDb = new DatabaseImpl(dbPath, SONGS_DIR_NAME, USERS_FILE_NAME, PLAYLISTS_FILE_NAME);
 
-        assertDoesNotThrow(() -> reloadedDb.checkUser("savedUser@mail.com", "secure"));
-        assertDoesNotThrow(() -> reloadedDb.getPlaylist("SavedList", "savedUser@mail.com"));
+        assertDoesNotThrow(() -> reloadedDb.checkUser("savedUser@mail.com", "secure"), "After closing database, the new user are not added");
+        assertDoesNotThrow(() -> reloadedDb.getPlaylist("SavedList", "savedUser@mail.com"), "After closing database, the new playlist are not added");
     }
 }
